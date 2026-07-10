@@ -121,6 +121,11 @@ class TrainingConfig:
     mlp_max_iter: int = 500
     mlp_early_stopping: bool = True
 
+    # Optuna settings
+    use_optuna: bool = False          # Set True to use Optuna instead of GridSearch
+    optuna_n_trials: int = 50         # Number of Optuna trials per model
+    optuna_timeout: int = 300         # Timeout in seconds per model
+
 
 TRAINING = TrainingConfig()
 

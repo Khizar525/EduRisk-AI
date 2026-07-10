@@ -1,16 +1,12 @@
 """
-Training orchestration — trains all models and selects the best.
+Training orchestration — trains all models, tunes, evaluates, and selects best.
+
+Supports two tuning strategies:
+- GridSearchCV (default, deterministic, fast)
+- Optuna (Bayesian optimization, deeper search)
 
 Correct data flow (no leakage):
-1. Load raw data
-2. Impute missing values (full data — safe for risk engineering)
-3. Label encode categoricals (full data — deterministic, needed for risk engineering)
-4. Engineer Risk_Level target (uses Depression + encoded features)
-5. Split into train/test (BEFORE scaling)
-6. Fit StandardScaler on TRAINING data only
-7. Transform both splits
-8. Train models on scaled training data
-9. Evaluate on scaled test data
+1. Load → Impute → Encode → Engineer Risk → Split → Scale (train only) → Train
 """
 
 from typing import Dict, Tuple
@@ -29,21 +25,16 @@ from src.preprocessing.pipeline import (
 )
 from src.features.engineering import engineer_risk_target, get_feature_target_split
 from src.training.models import get_model_configs
-from src.training.tuner import tune_model
+from src.training.tuner import (
+    tune_grid_search, tune_optuna, OPTUNA_SPACES,
+)
 from src.evaluation.reporter import evaluate_model, compare_models
+from src.evaluation.error_analysis import analyze_errors
 
 
 def prepare_data() -> Tuple[pd.DataFrame, dict]:
     """
     Load and prepare data for training.
-
-    Steps:
-    1. Load raw CSV
-    2. Select relevant columns
-    3. Impute missing values (full data)
-    4. Label encode categoricals (full data — needed for risk engineering)
-    5. Engineer Risk_Level target
-    6. Drop Depression column (replaced by Risk_Level)
 
     Returns:
         Tuple of (DataFrame with Risk_Level, fitted encoders).
@@ -51,17 +42,12 @@ def prepare_data() -> Tuple[pd.DataFrame, dict]:
     print("Loading dataset...")
     raw_df = load_dataset()
 
-    # Impute missing values (safe — uses median/mode)
     print("Imputing missing values...")
     df = impute_missing(raw_df)
 
-    # Label encode categoricals (safe — deterministic mapping)
-    # Needed before risk engineering because assign_risk_level checks
-    # the encoded value of Sleep Duration
     print("Encoding categorical features...")
     df, encoders = label_encode_categoricals(df, fit=True)
 
-    # Engineer Risk_Level target from Depression + other features
     print("Engineering Risk_Level target...")
     df = engineer_risk_target(df, encoders=encoders, drop_depression=True)
 
@@ -88,7 +74,6 @@ def train_all(
     else:
         encoders = {}
 
-    # Get feature matrix and target vector
     X_df, y, feature_names = get_feature_target_split(df)
     print(f"\nFeatures: {feature_names}")
     print(f"Dataset shape: {X_df.shape}")
@@ -114,12 +99,11 @@ def train_all(
         X_train_raw, X_test_raw
     )
 
-    # Full scaled dataset for cross-validation
     X_all_scaled = np.vstack([X_train_scaled, X_test_scaled])
     y_all = np.concatenate([y_train, y_test])
 
     # ── Step 4: Train Models ───────────────────────────────────
-    print("\nTraining models...")
+    print(f"\nTraining models (tuning: {'Optuna' if TRAINING.use_optuna else 'GridSearchCV'})...")
     model_configs = get_model_configs()
     models = {}
     cv = StratifiedKFold(n_splits=TRAINING.cv_folds, shuffle=True, random_state=42)
@@ -129,13 +113,26 @@ def train_all(
         print(f"  {name}")
         print(f"{'='*50}")
 
-        best_model, best_params = tune_model(
-            model=config["model"],
-            param_grid=config["param_grid"],
-            X_train=X_train_scaled,
-            y_train=y_train,
-            model_name=name,
-        )
+        if TRAINING.use_optuna and name in OPTUNA_SPACES:
+            # Optuna tuning
+            best_model, best_params, best_cv = tune_optuna(
+                model_class=type(config["model"]),
+                X_train=X_train_scaled,
+                y_train=y_train,
+                param_space_fn=OPTUNA_SPACES[name],
+                model_name=name,
+                n_trials=TRAINING.optuna_n_trials,
+                random_state=TRAINING.random_state,
+            )
+        else:
+            # GridSearchCV tuning
+            best_model, best_params, best_cv = tune_grid_search(
+                model=config["model"],
+                param_grid=config["param_grid"],
+                X_train=X_train_scaled,
+                y_train=y_train,
+                model_name=name,
+            )
 
         # Cross-validation on full scaled data
         cv_scores = cross_val_score(
@@ -162,7 +159,19 @@ def train_all(
 
     comparison_df = compare_models(results)
 
-    # ── Step 6: Select Best ────────────────────────────────────
+    # ── Step 6: Error Analysis ─────────────────────────────────
+    print("\n" + "=" * 60)
+    print("  ERROR ANALYSIS")
+    print("=" * 60)
+
+    error_results = []
+    for name, info in models.items():
+        err = analyze_errors(
+            info["model"], X_test_scaled, y_test, feature_names, name
+        )
+        error_results.append(err)
+
+    # ── Step 7: Select Best ────────────────────────────────────
     best_name = comparison_df["Accuracy"].idxmax()
     best_model = models[best_name]["model"]
 
@@ -174,7 +183,7 @@ def train_all(
           f"± {comparison_df.loc[best_name, 'CV Std']:.4f}")
     print(f"{'='*60}")
 
-    # ── Step 7: Save Artifacts ─────────────────────────────────
+    # ── Step 8: Save Artifacts ─────────────────────────────────
     if save:
         save_artifacts(
             model=best_model,
