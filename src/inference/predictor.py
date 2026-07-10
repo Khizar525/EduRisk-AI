@@ -5,9 +5,12 @@ Prediction service — loads model and artifacts, makes predictions.
 import numpy as np
 from typing import Dict, Optional, List
 
-from src.config import PATHS, RISK_LABELS_EMOJI, RISK_ADVICE
+from src.config import PATHS, RISK_LABELS_EMOJI, RISK_ADVICE, RISK_LABELS
 from src.preprocessing.pipeline import load_artifacts
-from src.explainability.shap_utils import compute_local_explanation
+from src.explainability.shap_utils import (
+    compute_local_explanation,
+    compute_local_explanation_with_interpretation,
+)
 from src.training.models import get_shap_compatible_model
 
 
@@ -27,11 +30,15 @@ class RiskPredictor:
         return self.model is not None and self.scaler is not None
 
     @property
+    def model_name(self) -> str:
+        """Get human-readable model name."""
+        return type(self.model).__name__
+
+    @property
     def explainer(self):
         """Lazy-load SHAP explainer."""
         if self._explainer is None:
             import shap
-            # Check if model is tree-based (supports TreeExplainer)
             model_type = type(self.model).__name__
             is_tree = any(
                 kw in model_type.lower()
@@ -40,7 +47,6 @@ class RiskPredictor:
             if is_tree:
                 self._explainer = shap.TreeExplainer(self.model)
             else:
-                # KernelExplainer for SVM/MLP — slower but works
                 background = shap.sample(
                     self.scaler.transform(np.zeros((1, len(self.feature_names)))),
                     50,
@@ -65,10 +71,10 @@ class RiskPredictor:
         suicidal_thoughts: str,
     ) -> Dict:
         """
-        Make a risk prediction.
+        Make a risk prediction with full explanation.
 
         Returns:
-            Dictionary with risk_level, confidence, advice, shap_image.
+            Dictionary with prediction, probabilities, advice, and SHAP data.
         """
         # Encode inputs
         input_data = np.array([[
@@ -92,14 +98,23 @@ class RiskPredictor:
         prediction = int(self.model.predict(input_scaled)[0])
         probs = self.model.predict_proba(input_scaled)[0]
 
+        # Get SHAP explanation with interpretation
+        shap_data = compute_local_explanation_with_interpretation(
+            self.explainer, input_scaled, self.feature_names, prediction
+        )
+
         return {
             "prediction": prediction,
             "risk_level": RISK_LABELS_EMOJI[prediction],
+            "risk_label": RISK_LABELS[prediction],
             "confidence": f"{max(probs) * 100:.1f}%",
+            "confidence_value": float(max(probs)),
             "advice": RISK_ADVICE[prediction],
             "probabilities": {
                 RISK_LABELS_EMOJI[i]: round(float(p) * 100, 1)
                 for i, p in enumerate(probs)
             },
+            "probabilities_raw": {i: float(p) for i, p in enumerate(probs)},
             "input_scaled": input_scaled,
+            "shap": shap_data,
         }
