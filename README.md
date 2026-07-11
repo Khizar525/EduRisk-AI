@@ -411,7 +411,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 **M. Khizar Akram** — Team Lead
 
-Project architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend integration, deployment, documentation, and major contributions to model training and evaluation.
+*Project architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend integration, deployment, documentation, and major contributions to model training and evaluation.*
 
 <br>
 
@@ -419,7 +419,7 @@ Project architecture, data acquisition, EDA, preprocessing, feature engineering,
 
 | Name | Contribution |
 |------|-------------|
-| M. Khizar Akram | Architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend, deployment, documentation, model training & evaluation |
+| M. Khizar Akram | Project architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend integration, deployment, documentation, model training & evaluation |
 | Safwan Marwat | Data collection, Kaggle integration, exploratory analysis |
 | Syed Mughees | Preprocessing pipeline, feature engineering, label encoding |
 | Ifrahim Yousuf | Model training, hyperparameter tuning, evaluation metrics |
