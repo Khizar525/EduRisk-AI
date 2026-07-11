@@ -408,6 +408,8 @@ python -m pytest tests/ -v --cov=src --cov-report=html
 - [ML Methodology](docs/methodology.md) — pipeline, feature selection, model details
 - [Results & Metrics](docs/results.md) — performance analysis and error patterns
 - [Model Card](MODEL_CARD.md) — model details, fairness, and usage
+- [Brand Guide](docs/brand.md) — visual identity, color palette, typography
+- [Social Preview](docs/social-preview.md) — GitHub banner and OG image setup
 - [Contributing Guide](CONTRIBUTING.md) — how to contribute
 
 ---

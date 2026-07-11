@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#111827" stroke="#1f2937" stroke-width="2"/>
+  <!-- Shield shape -->
+  <path d="M100 30 L150 55 L150 110 C150 145 125 165 100 175 C75 165 50 145 50 110 L50 55 Z" 
+        fill="none" stroke="url(#grad)" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Brain/Network nodes -->
+  <circle cx="100" cy="75" r="6" fill="#14b8a6"/>
+  <circle cx="75" cy="100" r="5" fill="#38bdf8"/>
+  <circle cx="125" cy="100" r="5" fill="#38bdf8"/>
+  <circle cx="85" cy="125" r="4" fill="#14b8a6" opacity="0.7"/>
+  <circle cx="115" cy="125" r="4" fill="#14b8a6" opacity="0.7"/>
+  <!-- Connecting lines -->
+  <line x1="100" y1="75" x2="75" y2="100" stroke="#14b8a6" stroke-width="1.5" opacity="0.5"/>
+  <line x1="100" y1="75" x2="125" y2="100" stroke="#14b8a6" stroke-width="1.5" opacity="0.5"/>
+  <line x1="75" y1="100" x2="85" y2="125" stroke="#38bdf8" stroke-width="1.5" opacity="0.4"/>
+  <line x1="125" y1="100" x2="115" y2="125" stroke="#38bdf8" stroke-width="1.5" opacity="0.4"/>
+  <line x1="85" y1="125" x2="115" y2="125" stroke="#14b8a6" stroke-width="1.5" opacity="0.3"/>
+  <!-- Lightning bolt (risk/alert) -->
+  <path d="M97 60 L92 82 L100 82 L96 100 L108 78 L100 78 L104 60 Z" 
+        fill="url(#grad)" opacity="0.9"/>
+</svg>
