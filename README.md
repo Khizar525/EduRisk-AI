@@ -407,6 +407,7 @@ python -m pytest tests/ -v --cov=src --cov-report=html
 - [Architecture Guide](docs/architecture.md) — system design with Mermaid diagrams
 - [ML Methodology](docs/methodology.md) — pipeline, feature selection, model details
 - [Results & Metrics](docs/results.md) — performance analysis and error patterns
+- [Engineering Case Study](docs/case-study.md) — full technical narrative
 - [Model Card](MODEL_CARD.md) — model details, fairness, and usage
 - [Brand Guide](docs/brand.md) — visual identity, color palette, typography
 - [Visual Assets](docs/assets.md) — screenshots, charts, diagrams catalog
