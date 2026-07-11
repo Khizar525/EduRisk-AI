@@ -15,7 +15,7 @@
 
 <br>
 
-**EduRisk AI predicts which university students are at academic risk — and explains exactly why.**
+**EduRisk AI is an explainable machine learning platform that predicts academic risk from behavioral and academic indicators while providing transparent, per-prediction explanations through SHAP.**
 
 [Quick Start](#quick-start) • [Architecture](#architecture) • [Screenshots](#screenshots) • [Results](#results) • [API](#rest-api)
 
@@ -171,7 +171,7 @@ flowchart LR
     style F fill:#c8e6c9
 ```
 
-> **Leakage safety**: Imputation (median/mode) and label encoding happen before the split. This is safe — median/mode are robust statistics that don't leak target information, and label encoding is a deterministic mapping (Male→0, Female→1). The scaler is the only transformer fitted after the split, on training data only.
+> **Note on preprocessing order**: The pipeline performs deterministic label encoding and simple median/mode imputation before splitting. Because these transformations do not use target labels, they have minimal impact on evaluation. Feature scaling—the transformation most likely to introduce evaluation bias—is fitted exclusively on the training set and applied to the test set.
 
 ---
 
@@ -311,7 +311,8 @@ edurisk-ai/
 │   ├── inference/          # Prediction service and logging
 │   └── utils/              # Validators and helpers
 ├── tests/                  # 62 unit tests
-├── docs/                   # Documentation
+├── docs/                   # Technical documentation
+├── career/                 # Personal portfolio & interview assets
 ├── assets/                 # Charts, screenshots, figures
 ├── models/                 # Saved model artifacts
 ├── data/                   # Raw and processed data
@@ -374,19 +375,6 @@ python -m pytest tests/ -v
 - [Model Card](MODEL_CARD.md) — model details, fairness, and usage
 - [Contributing Guide](CONTRIBUTING.md) — how to contribute
 
-<details>
-<summary>Additional Resources</summary>
-
-- [Interview Prep](docs/interview-prep.md) — 30 Q&As for technical interviews
-- [Portfolio Material](docs/portfolio.md) — resume bullets, pitches, descriptions
-- [LinkedIn Launch Kit](docs/linkedin.md) — posts, carousel, article outline
-- [Brand Guide](docs/brand.md) — visual identity, color palette, typography
-- [Visual Assets](docs/assets.md) — screenshots, charts, diagrams catalog
-- [Social Preview](docs/social-preview.md) — GitHub banner and OG image setup
-- [Final Review](docs/final-review.md) — scoring and recommendations
-
-</details>
-
 ---
 
 ## Roadmap
@@ -423,7 +411,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 **M. Khizar Akram** — Team Lead
 
-Architecture · FastAPI · Next.js · CI/CD · Deployment
+Project architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend integration, deployment, documentation, and major contributions to model training and evaluation.
 
 <br>
 
@@ -431,7 +419,7 @@ Architecture · FastAPI · Next.js · CI/CD · Deployment
 
 | Name | Contribution |
 |------|-------------|
-| M. Khizar Akram | End-to-end system, REST API, frontend, Docker, documentation |
+| M. Khizar Akram | Architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend, deployment, documentation, model training & evaluation |
 | Safwan Marwat | Data collection, Kaggle integration, exploratory analysis |
 | Syed Mughees | Preprocessing pipeline, feature engineering, label encoding |
 | Ifrahim Yousuf | Model training, hyperparameter tuning, evaluation metrics |
