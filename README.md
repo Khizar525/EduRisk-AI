@@ -44,7 +44,15 @@ flowchart LR
 
 ## Why This Project?
 
-Most ML repositories stop at training a model. EduRisk AI goes further — it demonstrates the **full machine learning lifecycle** as it works in production:
+Most machine learning repositories stop at training a model. EduRisk AI was designed to demonstrate **production-oriented machine learning engineering** by combining:
+
+- Reproducible preprocessing pipelines with no data leakage
+- Explainable AI with SHAP (global + per-prediction)
+- REST APIs with FastAPI
+- Interactive web applications with Next.js and Tailwind CSS
+- Modular software architecture across 8+ packages
+- Automated testing (62 unit tests)
+- Containerized deployment with Docker
 
 | Stage | What EduRisk AI Does |
 |-------|---------------------|
@@ -94,6 +102,7 @@ cd EduRisk-AI
 # Setup
 python -m venv venv
 venv\Scripts\activate      # Windows
+# source venv/bin/activate  # macOS/Linux
 pip install -r requirements.txt
 
 # Train
@@ -101,9 +110,11 @@ python -m src.training.trainer
 
 # Launch API
 uvicorn app.api:app --host 0.0.0.0 --port 8000
+# API docs: http://localhost:8000/docs
 
 # Launch Frontend
 cd frontend && npm install && npm run dev
+# Frontend: http://localhost:3000
 ```
 
 > Gradio is also available via `python -m app.main` as a lightweight alternative.
@@ -331,6 +342,22 @@ EduRisk-AI/
 | Features Used | 11 (selected from 27) |
 | Target | 3-class Risk Level (Low / Medium / High) |
 
+### Selected Features
+
+| Feature | Type | Description |
+|---------|------|-------------|
+| Gender | Categorical | Student gender |
+| Age | Numerical | Student age (17-30) |
+| Academic Pressure | Ordinal (1-5) | Self-reported academic pressure |
+| CGPA | Numerical | Cumulative GPA (0.0-4.0) |
+| Study Satisfaction | Ordinal (1-5) | Satisfaction with study conditions |
+| Sleep Duration | Categorical | Daily sleep hours |
+| Dietary Habits | Categorical | General diet quality |
+| Work/Study Hours | Numerical | Daily study/work hours (0-12) |
+| Financial Stress | Ordinal (1-5) | Self-reported financial stress |
+| Family History | Categorical | Family history of mental illness |
+| Suicidal Thoughts | Categorical | History of suicidal ideation |
+
 ### Limitations
 
 - **Self-reported data** — features rely on student self-assessment
@@ -354,12 +381,20 @@ SHAP provides both global feature importance and per-prediction explanations wit
 
 FastAPI provides automatic OpenAPI documentation, native async support, and Pydantic validation. Gradio serves as a rapid prototyping interface for demos.
 
+### Why Next.js over React + Vite?
+
+Next.js provides server-side rendering, file-based routing, and a mature ecosystem for deployment on Vercel. TypeScript integration and Tailwind CSS made building the dark-mode UI fast and maintainable.
+
 ---
 
 ## Testing
 
 ```bash
+# Run all tests
 python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ -v --cov=src --cov-report=html
 ```
 
 **62 tests** covering preprocessing, training, evaluation, SHAP, inference, and API.
