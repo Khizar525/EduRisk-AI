@@ -88,8 +88,8 @@ flowchart TD
 
 ```bash
 # Clone
-git clone https://github.com/Khizar525/edurisk-ai.git
-cd edurisk-ai
+git clone https://github.com/Khizar525/EduRisk-AI.git
+cd EduRisk-AI
 
 # Setup
 python -m venv venv
@@ -294,7 +294,7 @@ Interactive docs at `http://localhost:8000/docs`.
 ## Repository Structure
 
 ```
-edurisk-ai/
+EduRisk-AI/
 ├── app/                    # Application layer
 │   ├── main.py             # Gradio dashboard
 │   └── api.py              # FastAPI REST API
