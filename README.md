@@ -54,6 +54,8 @@ Most machine learning repositories stop at training a model. EduRisk AI was desi
 - Automated testing (62 unit tests)
 - Containerized deployment with Docker
 
+**Origin story**: This project started as a team Colab notebook for a university course. I transformed it solo into a production-ready platform — from a single notebook to a full-stack ML system with REST API, modern frontend, explainability, and deployment infrastructure.
+
 | Stage | What EduRisk AI Does |
 |-------|---------------------|
 | **Data** | 27,901 student records, 11 selected features, 3-class risk target |
@@ -322,6 +324,7 @@ EduRisk-AI/
 │   ├── inference/          # Prediction service and logging
 │   └── utils/              # Validators and helpers
 ├── tests/                  # 62 unit tests
+├── notebooks/              # Original Colab notebook (origin story)
 ├── docs/                   # Technical documentation
 ├── career/                 # Personal portfolio & interview assets
 ├── assets/                 # Charts, screenshots, figures
@@ -437,27 +440,19 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 - **Dataset**: [Student Depression Dataset](https://www.kaggle.com/datasets/hopesb/student-depression-dataset) on Kaggle
 - **Course**: CSL 460 — Data Mining, Bahria University Karachi Campus
 - **Instructors**: Dr. Hussain (Course), Engr. Noor us Sabah (Lab)
+- **Origin**: This project started as a team Colab notebook (CSL 460 coursework). The production-ready platform was designed, built, and deployed solo by M. Khizar Akram.
 
 ---
 
 <div align="center">
 
-### Developed by
+### Built by
 
-**M. Khizar Akram** — Team Lead
+**M. Khizar Akram**
 
-*Project architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend integration, deployment, documentation, and major contributions to model training and evaluation.*
+*Sole developer — end-to-end system design, implementation, and deployment.*
 
-<br>
-
-### Contributors
-
-| Name | Contribution |
-|------|-------------|
-| M. Khizar Akram | Project architecture, data acquisition, EDA, preprocessing, feature engineering, FastAPI, frontend integration, deployment, documentation, model training & evaluation |
-| Safwan Marwat | Data collection, Kaggle integration, exploratory analysis |
-| Syed Mughees | Preprocessing pipeline, feature engineering, label encoding |
-| Ifrahim Yousuf | Model training, hyperparameter tuning, evaluation metrics |
+Transformed a team Colab notebook into a production-ready ML platform: trained 4 models on real data (27,901 records), built FastAPI REST API and Next.js dark-mode frontend, implemented SHAP explainability with per-prediction waterfall plots, wrote 62 unit tests, and containerized with Docker.
 
 [![GitHub](https://img.shields.io/badge/GitHub-Khizar525-181717.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/Khizar525)
 
